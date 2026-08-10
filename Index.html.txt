@@ -1,0 +1,1939 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎧 Pomodoro Sonoro - Gamificação</title>
+  <style>
+    /* === RESET & BASE === */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #12121c;
+      color: #e8e8f0;
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .app {
+      max-width: 1100px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(8px);
+      border-radius: 40px;
+      padding: 28px 24px 32px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
+      transition: all 0.2s;
+    }
+
+    /* === HEADER === */
+    .header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .header h1 {
+      font-size: 1.9rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #f9d976, #f39c12);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    .header-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      font-size: 0.95rem;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 8px 20px;
+      border-radius: 40px;
+    }
+
+    .header-stats span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .header-stats .num {
+      font-weight: 700;
+      color: #ffd966;
+    }
+
+    /* === MAIN CARD (combinação + timer) === */
+    .main-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 30px;
+      padding: 24px 20px 28px;
+      margin-bottom: 25px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .combo-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .combo-id {
+      font-size: 0.9rem;
+      color: #aaa;
+    }
+
+    .combo-status {
+      font-size: 0.9rem;
+    }
+
+    .combo-status .done {
+      color: #6fcf97;
+      font-weight: 600;
+    }
+    .combo-status .pending {
+      color: #f2994a;
+    }
+
+    .combo-sounds {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      margin: 8px 0 12px;
+    }
+
+    .sound-pill {
+      background: rgba(0, 0, 0, 0.35);
+      padding: 8px 22px;
+      border-radius: 50px;
+      border-left: 4px solid #f39c12;
+      text-align: center;
+    }
+
+    .sound-pill .name {
+      font-size: 1.4rem;
+      font-weight: 600;
+    }
+
+    .sound-pill .cat {
+      font-size: 0.75rem;
+      color: #bbb;
+      margin-top: 2px;
+    }
+
+    .vs {
+      font-size: 1.6rem;
+      color: #777;
+      font-weight: 300;
+    }
+
+    /* Timer */
+    .timer-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 16px 0 14px;
+    }
+
+    .timer-circle {
+      position: relative;
+      width: 170px;
+      height: 170px;
+    }
+
+    .timer-circle svg {
+      transform: rotate(-90deg);
+    }
+
+    .timer-circle .bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.08);
+      stroke-width: 8;
+    }
+
+    .timer-circle .progress {
+      fill: none;
+      stroke: #f39c12;
+      stroke-width: 8;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 0.3s ease;
+    }
+
+    .timer-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2.6rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 1px;
+    }
+
+    .timer-phase {
+      font-size: 0.9rem;
+      color: #aaa;
+      margin-top: 2px;
+    }
+
+    .timer-controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .btn {
+      background: rgba(255, 255, 255, 0.07);
+      border: none;
+      color: #fff;
+      padding: 10px 26px;
+      border-radius: 40px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid transparent;
+    }
+
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.14);
+      transform: scale(1.02);
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn-primary {
+      background: #f39c12;
+      color: #12121c;
+    }
+
+    .btn-primary:hover {
+      background: #f1c40f;
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .btn-success {
+      background: #27ae60;
+      color: #fff;
+    }
+
+    .btn-success:hover {
+      background: #2ecc71;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-danger {
+      background: #e74c3c;
+      color: #fff;
+    }
+
+    .btn-danger:hover {
+      background: #c0392b;
+    }
+
+    .btn-sm {
+      padding: 6px 16px;
+      font-size: 0.8rem;
+    }
+
+    /* === NAVEGAÇÃO ENTRE COMBOS === */
+    .combo-nav {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    /* === BOTÕES DE SEÇÕES === */
+    .section-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin: 16px 0 8px;
+    }
+
+    /* === MODALS === */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: #1e1e2e;
+      border-radius: 32px;
+      max-width: 900px;
+      width: 100%;
+      max-height: 90vh;
+      padding: 24px 20px 28px;
+      overflow-y: auto;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
+      position: relative;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h2 {
+      font-size: 1.6rem;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: #aaa;
+      font-size: 1.8rem;
+      cursor: pointer;
+      padding: 0 8px;
+      transition: color 0.2s;
+    }
+
+    .modal-close:hover {
+      color: #fff;
+    }
+
+    /* === CATÁLOGO === */
+    .catalog-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .catalog-filters input,
+    .catalog-filters select {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      flex: 1 1 160px;
+    }
+
+    .catalog-filters input::placeholder {
+      color: #888;
+    }
+
+    .catalog-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      max-height: 50vh;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .catalog-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 14px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .catalog-item:hover {
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .catalog-item .catalog-id {
+      color: #888;
+      min-width: 60px;
+    }
+
+    .catalog-item .catalog-sounds {
+      flex: 1;
+      padding: 0 12px;
+    }
+
+    .catalog-item .catalog-status {
+      font-size: 0.8rem;
+      padding: 2px 12px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .catalog-item .catalog-status.done {
+      background: rgba(46, 204, 113, 0.2);
+      color: #6fcf97;
+    }
+
+    .catalog-item .catalog-status.pending {
+      background: rgba(242, 153, 74, 0.15);
+      color: #f2994a;
+    }
+
+    .catalog-pagination {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    .catalog-pagination .btn {
+      padding: 4px 14px;
+      font-size: 0.8rem;
+    }
+
+    /* === ESTATÍSTICAS === */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.04);
+      padding: 16px;
+      border-radius: 20px;
+      text-align: center;
+    }
+
+    .stat-card .value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #ffd966;
+    }
+
+    .stat-card .label {
+      font-size: 0.8rem;
+      color: #aaa;
+      margin-top: 4px;
+    }
+
+    .chart-container {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 20px;
+      padding: 16px;
+      margin: 12px 0;
+    }
+
+    .chart-container canvas {
+      width: 100% !important;
+      height: auto !important;
+      max-height: 200px;
+    }
+
+    .badges-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .badge-item {
+      background: rgba(255, 215, 0, 0.1);
+      border: 1px solid rgba(255, 215, 0, 0.2);
+      padding: 4px 16px;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      color: #ffd966;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge-item.locked {
+      opacity: 0.3;
+      border-color: rgba(255, 255, 255, 0.08);
+      color: #888;
+    }
+
+    .badge-item .badge-icon {
+      font-size: 1rem;
+    }
+
+    /* === LABORATÓRIO DE SONS === */
+    .lab-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .lab-controls select,
+    .lab-controls input[type="range"] {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 30px;
+      font-size: 0.9rem;
+    }
+
+    .lab-controls input[type="range"] {
+      width: 120px;
+      padding: 0;
+      accent-color: #f39c12;
+    }
+
+    .lab-status {
+      font-size: 0.9rem;
+      color: #aaa;
+    }
+
+    /* === ATMOSPHERE CARD === */
+    .atmosphere-card {
+      background: linear-gradient(135deg, rgba(243, 156, 18, 0.12), rgba(241, 196, 15, 0.05));
+      border: 1px solid rgba(243, 156, 18, 0.2);
+      border-radius: 24px;
+      padding: 16px 20px;
+      margin-top: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .atmosphere-card p {
+      font-size: 0.95rem;
+      color: #ddd;
+    }
+
+    .atmosphere-card a {
+      color: #f1c40f;
+      text-decoration: none;
+      font-weight: 600;
+      border-bottom: 1px dotted rgba(241, 196, 15, 0.3);
+    }
+
+    .atmosphere-card a:hover {
+      color: #f9d976;
+    }
+
+    /* === HISTÓRICO === */
+    .history-table-wrap {
+      max-height: 200px;
+      overflow-y: auto;
+      margin: 12px 0;
+    }
+
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+
+    .history-table th,
+    .history-table td {
+      padding: 6px 10px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .history-table th {
+      color: #aaa;
+      font-weight: 500;
+      position: sticky;
+      top: 0;
+      background: #1e1e2e;
+    }
+
+    .export-btns {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    /* === CONFETES === */
+    .confetti-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+      overflow: hidden;
+    }
+
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      opacity: 0;
+    }
+
+    @keyframes confettiFall {
+      0% {
+        opacity: 1;
+        transform: translateY(0) rotate(0deg) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(100vh) rotate(720deg) scale(0.2);
+      }
+    }
+
+    /* === SCROLLBAR === */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+    }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 700px) {
+      .app {
+        padding: 16px 12px;
+      }
+      .header h1 {
+        font-size: 1.5rem;
+      }
+      .header-stats {
+        font-size: 0.8rem;
+        padding: 6px 14px;
+      }
+      .sound-pill .name {
+        font-size: 1.1rem;
+      }
+      .timer-circle {
+        width: 140px;
+        height: 140px;
+      }
+      .timer-text {
+        font-size: 2rem;
+      }
+      .modal {
+        padding: 16px;
+        max-width: 100%;
+      }
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <!-- HEADER -->
+    <div class="header">
+      <h1>🎵 Pomodoro Sonoro</h1>
+      <div class="header-stats">
+        <span>⭐ <span class="num" id="xpDisplay">0</span> XP</span>
+        <span>🎚️ Nível <span class="num" id="levelDisplay">1</span></span>
+        <span>🪙 <span class="num" id="goldDisplay">0</span></span>
+        <span>✅ <span class="num" id="doneDisplay">0</span>/2775</span>
+      </div>
+    </div>
+
+    <!-- MAIN CARD -->
+    <div class="main-card">
+      <div class="combo-header">
+        <span class="combo-id" id="comboId">#1</span>
+        <span class="combo-status" id="comboStatus">⏳ <span class="pending">Pendente</span></span>
+      </div>
+      <div class="combo-sounds">
+        <div class="sound-pill">
+          <div class="name" id="sound1Name">Aeroporto</div>
+          <div class="cat" id="sound1Cat">Urbano</div>
+        </div>
+        <span class="vs">✦</span>
+        <div class="sound-pill">
+          <div class="name" id="sound2Name">Andantino</div>
+          <div class="cat" id="sound2Cat">Instrumental</div>
+        </div>
+      </div>
+
+      <div class="timer-area">
+        <div class="timer-circle">
+          <svg width="170" height="170" viewBox="0 0 170 170">
+            <circle class="bg" cx="85" cy="85" r="73" />
+            <circle class="progress" id="timerProgress" cx="85" cy="85" r="73"
+            stroke-dasharray="458.67" stroke-dashoffset="0" />
+          </svg>
+          <div class="timer-text" id="timerDisplay">25:00</div>
+        </div>
+        <div class="timer-phase" id="timerPhase">⚡ Foco</div>
+      </div>
+
+      <div class="timer-controls">
+        <button class="btn btn-primary" id="startBtn">▶ Iniciar</button>
+        <button class="btn btn-secondary" id="pauseBtn" disabled>⏸ Pausar</button>
+        <button class="btn btn-outline" id="resetBtn">↺ Reset</button>
+        <button class="btn btn-secondary" id="completeOutsideBtn">✅ Já completei fora</button>
+      </div>
+
+      <div class="combo-nav">
+        <button class="btn btn-secondary btn-sm" id="prevBtn">◀ Anterior</button>
+        <button class="btn btn-secondary btn-sm" id="nextBtn">Próxima ▶</button>
+        <button class="btn btn-secondary btn-sm" id="randomBtn">🎲 Aleatória</button>
+      </div>
+    </div>
+
+    <!-- BOTÕES DE SEÇÕES -->
+    <div class="section-buttons">
+      <button class="btn btn-secondary" id="openCatalogBtn">📚 Catálogo</button>
+      <button class="btn btn-secondary" id="openStatsBtn">📊 Estatísticas</button>
+      <button class="btn btn-secondary" id="openLabBtn">🎛️ Laboratório</button>
+    </div>
+
+    <!-- ATMOSPHERE CARD -->
+    <div class="atmosphere-card">
+      <p>🎧 <strong>Atmosphere: Relaxing Sounds</strong> – Todos os sons da lista disponíveis no app oficial.</p>
+      <a href="https://apps.apple.com/us/app/atmosphere-relaxing-sounds/id1259186300" target="_blank">Baixar na App Store →</a>
+    </div>
+  </div>
+
+  <!-- MODAL: CATÁLOGO -->
+  <div class="modal-overlay" id="catalogModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>📚 Catálogo de Combinações</h2>
+        <button class="modal-close" data-modal="catalogModal">✕</button>
+      </div>
+      <div class="catalog-filters">
+        <input type="text" id="catalogSearch" placeholder="Buscar som ou ID..." />
+        <select id="catalogCategoryFilter">
+          <option value="">Todas as categorias</option>
+          <!-- preenchido via JS -->
+        </select>
+        <select id="catalogStatusFilter">
+          <option value="">Todos os status</option>
+          <option value="done">Concluído</option>
+          <option value="pending">Pendente</option>
+        </select>
+      </div>
+      <div class="catalog-list" id="catalogList"></div>
+      <div class="catalog-pagination" id="catalogPagination"></div>
+    </div>
+  </div>
+
+  <!-- MODAL: ESTATÍSTICAS -->
+  <div class="modal-overlay" id="statsModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>📊 Estatísticas & Recompensas</h2>
+        <button class="modal-close" data-modal="statsModal">✕</button>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="value" id="statTotal">0</div><div class="label">Pomodoros concluídos</div></div>
+        <div class="stat-card"><div class="value" id="statXp">0</div><div class="label">XP total</div></div>
+        <div class="stat-card"><div class="value" id="statGold">0</div><div class="label">Ouro total</div></div>
+        <div class="stat-card"><div class="value" id="statLevel">1</div><div class="label">Nível atual</div></div>
+      </div>
+      <div class="chart-container">
+        <canvas id="statsChart" width="400" height="150"></canvas>
+      </div>
+      <div>
+        <h3>🏅 Insígnias</h3>
+        <div class="badges-grid" id="badgesGrid"></div>
+      </div>
+      <div style="margin-top: 16px;">
+        <h3>📜 Histórico de Sessões</h3>
+        <div class="history-table-wrap">
+          <table class="history-table" id="historyTable">
+            <thead><tr><th>Data</th><th>Combinação</th><th>Duração</th></tr></thead>
+            <tbody id="historyBody"></tbody>
+          </table>
+        </div>
+        <div class="export-btns">
+          <button class="btn btn-secondary btn-sm" id="exportHistoryCsvBtn">📥 Exportar CSV</button>
+          <button class="btn btn-secondary btn-sm" id="exportBackupBtn">💾 Exportar Backup (JSON)</button>
+          <button class="btn btn-secondary btn-sm" id="importBackupBtn">📂 Importar Backup</button>
+          <input type="file" id="importFileInput" accept=".json" style="display:none" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: LABORATÓRIO DE SONS -->
+  <div class="modal-overlay" id="labModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>🎛️ Laboratório de Sintonia Sonora</h2>
+        <button class="modal-close" data-modal="labModal">✕</button>
+      </div>
+      <div class="lab-controls">
+        <select id="labSoundSelect">
+          <option value="chuva">🌧️ Chuva</option>
+          <option value="ondas">🌊 Ondas</option>
+          <option value="floresta">🌲 Floresta</option>
+          <option value="vento">💨 Vento</option>
+        </select>
+        <label>Volume <input type="range" id="labVolume" min="0" max="1" step="0.01" value="0.5" /></label>
+        <button class="btn btn-primary btn-sm" id="labPlayBtn">▶ Ouvir</button>
+        <button class="btn btn-secondary btn-sm" id="labStopBtn">⏹ Parar</button>
+        <span class="lab-status" id="labStatus">⏸ Parado</span>
+      </div>
+      <p style="color:#aaa; font-size:0.9rem; margin-top:8px;">🔊 Sons sintetizados via Web Audio API para ambiente de foco.</p>
+    </div>
+  </div>
+
+  <!-- CONFETES -->
+  <div class="confetti-container" id="confettiContainer"></div>
+
+  <script>
+    (function() {
+      'use strict';
+
+      // ============================================================
+      // 1. DADOS: 75 SONS
+      // ============================================================
+      const SOUNDS = [
+        { name: 'Aeroporto', category: 'Urbano' },
+        { name: 'Andantino', category: 'Instrumental' },
+        { name: 'Aspirador', category: 'Casa' },
+        { name: 'Baleia', category: 'Subaquático' },
+        { name: 'Bambu', category: 'Oriental' },
+        { name: 'Barco', category: 'Praia' },
+        { name: 'Barco a remos', category: 'Praia' },
+        { name: 'Batimento cardiaco', category: 'Casa' },
+        { name: 'Bolhas de ar', category: 'Subaquático' },
+        { name: 'Carril de vento', category: 'Oriental' },
+        { name: 'Cascata', category: 'Floresta' },
+        { name: 'Cavalo', category: 'Campo' },
+        { name: 'Chaminé', category: 'Casa' },
+        { name: 'Chuva', category: 'Praia' },
+        { name: 'Chuva intensa', category: 'Campo' },
+        { name: 'Chuva na janela', category: 'Casa' },
+        { name: 'Chuveiro', category: 'Casa' },
+        { name: 'Cigarra japonesa', category: 'Oriental' },
+        { name: 'Comboio', category: 'Urbano' },
+        { name: 'Construcção', category: 'Urbano' },
+        { name: 'Corrente de água', category: 'Campo' },
+        { name: 'Coruja', category: 'Floresta' },
+        { name: 'Coruja de celeiro', category: 'Floresta' },
+        { name: 'Crianças a brincar', category: 'Parque' },
+        { name: 'Cão', category: 'Parque' },
+        { name: 'Debaixo do mar', category: 'Subaquático' },
+        { name: 'Duduk', category: 'Oriental' },
+        { name: 'Evening Fall', category: 'Instrumental' },
+        { name: 'Flauta chinesa', category: 'Oriental' },
+        { name: 'Fogueira', category: 'Praia' },
+        { name: 'Fonte', category: 'Parque' },
+        { name: 'Gaivotas', category: 'Praia' },
+        { name: 'Galinhas', category: 'Campo' },
+        { name: 'Galo', category: 'Campo' },
+        { name: 'Gato', category: 'Casa' },
+        { name: 'Gotas', category: 'Casa' },
+        { name: 'Grilos', category: 'Floresta' },
+        { name: 'Gymnopedie', category: 'Instrumental' },
+        { name: 'Lago', category: 'Parque' },
+        { name: 'Lullaby', category: 'Instrumental' },
+        { name: 'Melodia', category: 'Praia' },
+        { name: 'Motor de caminhão', category: 'Urbano' },
+        { name: 'Máquina de lavar', category: 'Casa' },
+        { name: 'Neptune', category: 'Instrumental' },
+        { name: 'Never You Find Me', category: 'Instrumental' },
+        { name: 'Om', category: 'Oriental' },
+        { name: 'Ondas', category: 'Praia' },
+        { name: 'Ovelha', category: 'Campo' },
+        { name: 'Patos', category: 'Parque' },
+        { name: 'Pessoas', category: 'Urbano' },
+        { name: 'Pica-pau', category: 'Floresta' },
+        { name: 'Polícia', category: 'Urbano' },
+        { name: 'Pombos', category: 'Urbano' },
+        { name: 'Porco', category: 'Campo' },
+        { name: 'Prato Tibetano', category: 'Oriental' },
+        { name: 'Pássaros', category: 'Parque' },
+        { name: 'Relógio', category: 'Casa' },
+        { name: 'Rio', category: 'Floresta' },
+        { name: 'Ritual', category: 'Oriental' },
+        { name: 'Ruído Branco', category: 'Casa' },
+        { name: 'Ruído marrom', category: 'Casa' },
+        { name: 'Ruído rosa', category: 'Casa' },
+        { name: 'Sapos', category: 'Floresta' },
+        { name: 'Secador', category: 'Casa' },
+        { name: 'Sinos tibetanos', category: 'Oriental' },
+        { name: 'Sonar', category: 'Subaquático' },
+        { name: 'Tambor Japonês', category: 'Oriental' },
+        { name: 'Teclado', category: 'Casa' },
+        { name: 'Tempestade', category: 'Praia' },
+        { name: 'Trânsito', category: 'Urbano' },
+        { name: 'Vaca', category: 'Campo' },
+        { name: 'Vento', category: 'Floresta' },
+        { name: 'Ventoinha', category: 'Casa' },
+        { name: 'Viagem de trem', category: 'Urbano' },
+        { name: 'Viola', category: 'Praia' }
+      ];
+
+      // ============================================================
+      // 2. GERAR COMBINAÇÕES (2775)
+      // ============================================================
+      function generateCombinations() {
+        const combos = [];
+        for (let i = 0; i < SOUNDS.length; i++) {
+          for (let j = i + 1; j < SOUNDS.length; j++) {
+            combos.push({
+              id: combos.length + 1,
+              sound1: SOUNDS[i].name,
+              cat1: SOUNDS[i].category,
+              sound2: SOUNDS[j].name,
+              cat2: SOUNDS[j].category,
+              done: false
+            });
+          }
+        }
+        return combos;
+      }
+
+      // ============================================================
+      // 3. ESTADO E PERSISTÊNCIA
+      // ============================================================
+      const STORAGE_KEY = 'pomodoro_sound_rpg';
+
+      function defaultState() {
+        const combos = generateCombinations();
+        return {
+          combinations: combos,
+          xp: 0,
+          gold: 0,
+          level: 1,
+          history: [], // { timestamp, comboId, duration }
+          currentIndex: 0,
+        };
+      }
+
+      function loadState() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            // Verifica integridade
+            if (parsed.combinations && parsed.combinations.length === 2775 &&
+              typeof parsed.xp === 'number' && typeof parsed.gold === 'number' &&
+              typeof parsed.level === 'number' && Array.isArray(parsed.history) &&
+              typeof parsed.currentIndex === 'number') {
+              return parsed;
+            }
+          }
+        } catch (_) {}
+        return defaultState();
+      }
+
+      function saveState() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      }
+
+      let state = loadState();
+
+      // ============================================================
+      // 4. FUNÇÕES AUXILIARES
+      // ============================================================
+      function getDoneCount() {
+        return state.combinations.filter(c => c.done).length;
+      }
+
+      function getLevelFromXp(xp) {
+        return Math.floor(xp / 100) + 1;
+      }
+
+      function getBadges(doneCount) {
+        const milestones = [
+          { count: 1, label: '🌟 Iniciado nos Sons' },
+          { count: 10, label: '🎯 Explorador de Acordes' },
+          { count: 50, label: '⚡ Maestro Alquimista' },
+          { count: 100, label: '🧙 Sábio das Harmonias' },
+          { count: 250, label: '🔥 Guardião das Frequências' },
+          { count: 500, label: '💎 Mestre dos Elementos' },
+          { count: 1000, label: '👑 Arquimago do Foco' },
+          { count: 2000, label: '🚀 Lenda Viva' },
+          { count: 2775, label: '🏆 Lenda do Foco Absoluto' }
+        ];
+        return milestones.map(m => ({
+          ...m,
+          unlocked: doneCount >= m.count
+        }));
+      }
+
+      // ============================================================
+      // 5. UI ELEMENTOS
+      // ============================================================
+      const $ = id => document.getElementById(id);
+      const sound1Name = $('sound1Name');
+      const sound1Cat = $('sound1Cat');
+      const sound2Name = $('sound2Name');
+      const sound2Cat = $('sound2Cat');
+      const comboId = $('comboId');
+      const comboStatus = $('comboStatus');
+      const timerDisplay = $('timerDisplay');
+      const timerProgress = $('timerProgress');
+      const timerPhase = $('timerPhase');
+      const xpDisplay = $('xpDisplay');
+      const levelDisplay = $('levelDisplay');
+      const goldDisplay = $('goldDisplay');
+      const doneDisplay = $('doneDisplay');
+      const startBtn = $('startBtn');
+      const pauseBtn = $('pauseBtn');
+      const resetBtn = $('resetBtn');
+      const completeOutsideBtn = $('completeOutsideBtn');
+      const prevBtn = $('prevBtn');
+      const nextBtn = $('nextBtn');
+      const randomBtn = $('randomBtn');
+
+      // Modals
+      const catalogModal = $('catalogModal');
+      const statsModal = $('statsModal');
+      const labModal = $('labModal');
+      const modalCloses = document.querySelectorAll('[data-modal]');
+
+      // Catalog
+      const catalogList = $('catalogList');
+      const catalogPagination = $('catalogPagination');
+      const catalogSearch = $('catalogSearch');
+      const catalogCategoryFilter = $('catalogCategoryFilter');
+      const catalogStatusFilter = $('catalogStatusFilter');
+      let catalogPage = 0;
+      const CATALOG_PER_PAGE = 50;
+
+      // Stats
+      const statTotal = $('statTotal');
+      const statXp = $('statXp');
+      const statGold = $('statGold');
+      const statLevel = $('statLevel');
+      const badgesGrid = $('badgesGrid');
+      const historyBody = $('historyBody');
+
+      // Lab
+      const labSoundSelect = $('labSoundSelect');
+      const labVolume = $('labVolume');
+      const labPlayBtn = $('labPlayBtn');
+      const labStopBtn = $('labStopBtn');
+      const labStatus = $('labStatus');
+
+      // ============================================================
+      // 6. TIMER
+      // ============================================================
+      const FOCUS_MINUTES = 25;
+      const SHORT_BREAK_MINUTES = 5;
+      const LONG_BREAK_MINUTES = 15;
+      const TOTAL_FOCUS_SEC = FOCUS_MINUTES * 60;
+      const CIRCUMFERENCE = 2 * Math.PI * 73; // raio 73
+
+      let timerState = 'idle'; // idle | running | paused | finished
+      let remainingSeconds = TOTAL_FOCUS_SEC;
+      let timerInterval = null;
+      let currentPhase = 'focus'; // focus | shortBreak | longBreak
+      let pomodorosCompleted = 0; // contagem para pausa longa
+
+      function updateTimerDisplay() {
+        const mins = Math.floor(remainingSeconds / 60);
+        const secs = remainingSeconds % 60;
+        timerDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        const total = (currentPhase === 'focus') ? TOTAL_FOCUS_SEC :
+          (currentPhase === 'shortBreak' ? SHORT_BREAK_MINUTES * 60 : LONG_BREAK_MINUTES * 60);
+        const progress = (total - remainingSeconds) / total;
+        const offset = CIRCUMFERENCE * (1 - progress);
+        timerProgress.style.strokeDashoffset = offset;
+      }
+
+      function setPhase(phase) {
+        currentPhase = phase;
+        if (phase === 'focus') {
+          remainingSeconds = TOTAL_FOCUS_SEC;
+          timerPhase.textContent = '⚡ Foco';
+          timerPhase.style.color = '#f39c12';
+        } else if (phase === 'shortBreak') {
+          remainingSeconds = SHORT_BREAK_MINUTES * 60;
+          timerPhase.textContent = '☕ Pausa curta';
+          timerPhase.style.color = '#2ecc71';
+        } else if (phase === 'longBreak') {
+          remainingSeconds = LONG_BREAK_MINUTES * 60;
+          timerPhase.textContent = '🌿 Pausa longa';
+          timerPhase.style.color = '#3498db';
+        }
+        updateTimerDisplay();
+      }
+
+      function stopTimer(keepState = false) {
+        if (timerInterval) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+        }
+        timerState = keepState ? timerState : 'idle';
+        startBtn.disabled = false;
+        pauseBtn.disabled = true;
+        startBtn.textContent = '▶ Iniciar';
+      }
+
+      function startTimer() {
+        if (timerState === 'running' || timerState === 'paused') return;
+        if (remainingSeconds <= 0) {
+          // se acabou, reiniciar fase de foco
+          setPhase('focus');
+        }
+        timerState = 'running';
+        startBtn.disabled = true;
+        pauseBtn.disabled = false;
+        pauseBtn.textContent = '⏸ Pausar';
+        startBtn.textContent = '⏳ ...';
+        timerInterval = setInterval(() => {
+          remainingSeconds--;
+          updateTimerDisplay();
+          if (remainingSeconds <= 0) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            timerState = 'idle';
+            startBtn.disabled = false;
+            pauseBtn.disabled = true;
+            startBtn.textContent = '▶ Iniciar';
+            // Tocar alarme
+            playAlarm();
+            // Verificar se é foco ou pausa
+            if (currentPhase === 'focus') {
+              // Pomodoro concluído
+              onPomodoroComplete();
+              // Incrementar contagem para pausa longa
+              pomodorosCompleted++;
+              // Iniciar pausa automaticamente? Decidimos não iniciar automaticamente, deixar usuário escolher.
+              // Mas podemos sugerir: após foco, ficar em idle e mostrar botão "pausa curta" ou "pausa longa".
+              // Por simplicidade, após foco, resetamos para foco novamente e mostramos mensagem.
+              // Mas o comportamento esperado: após foco, pode-se iniciar pausa. Vamos apenas tocar alarme e marcar combo.
+              // O timer fica em 0, o usuário pode reiniciar ou resetar.
+              // Vamos deixar o timer zerado e o usuário deve clicar em "reset" para voltar a 25min.
+              // Porém, para melhor UX, após foco, mudamos para pausa curta automaticamente? O requisito diz "ciclos de 25 min foco, 5 min pausa curta, 15 min pausa longa". Então devemos iniciar a pausa automaticamente.
+              // Vamos iniciar pausa curta automaticamente (ou longa se múltiplo de 4).
+              if (pomodorosCompleted % 4 === 0 && pomodorosCompleted > 0) {
+                setPhase('longBreak');
+              } else {
+                setPhase('shortBreak');
+              }
+              // Iniciar timer da pausa automaticamente
+              // Mas não inicia automaticamente, apenas prepara. Deixamos o usuário iniciar.
+              // Porém, para seguir o fluxo, vou iniciar a pausa automaticamente após 2 segundos.
+              setTimeout(() => {
+                if (timerState === 'idle' && remainingSeconds > 0) {
+                  startTimer();
+                }
+              }, 1500);
+            } else {
+              // Pausa terminou: voltar para foco
+              setPhase('focus');
+              // Iniciar foco automaticamente
+              setTimeout(() => {
+                if (timerState === 'idle' && remainingSeconds > 0) {
+                  startTimer();
+                }
+              }, 1500);
+            }
+          }
+        }, 1000);
+      }
+
+      function pauseTimer() {
+        if (timerState === 'running') {
+          clearInterval(timerInterval);
+          timerInterval = null;
+          timerState = 'paused';
+          pauseBtn.textContent = '▶ Retomar';
+          startBtn.disabled = false;
+          startBtn.textContent = '▶ Retomar';
+        } else if (timerState === 'paused') {
+          // retomar
+          timerState = 'running';
+          pauseBtn.textContent = '⏸ Pausar';
+          startBtn.disabled = true;
+          startBtn.textContent = '⏳ ...';
+          timerInterval = setInterval(() => {
+            remainingSeconds--;
+            updateTimerDisplay();
+            if (remainingSeconds <= 0) {
+              clearInterval(timerInterval);
+              timerInterval = null;
+              timerState = 'idle';
+              startBtn.disabled = false;
+              pauseBtn.disabled = true;
+              startBtn.textContent = '▶ Iniciar';
+              playAlarm();
+              if (currentPhase === 'focus') {
+                onPomodoroComplete();
+                pomodorosCompleted++;
+                if (pomodorosCompleted % 4 === 0) {
+                  setPhase('longBreak');
+                } else {
+                  setPhase('shortBreak');
+                }
+                setTimeout(() => {
+                  if (timerState === 'idle' && remainingSeconds > 0) {
+                    startTimer();
+                  }
+                }, 1500);
+              } else {
+                setPhase('focus');
+                setTimeout(() => {
+                  if (timerState === 'idle' && remainingSeconds > 0) {
+                    startTimer();
+                  }
+                }, 1500);
+              }
+            }
+          }, 1000);
+        }
+      }
+
+      function resetTimer() {
+        stopTimer();
+        setPhase('focus');
+        timerState = 'idle';
+        startBtn.disabled = false;
+        pauseBtn.disabled = true;
+        startBtn.textContent = '▶ Iniciar';
+        // Não resetar contagem de pomodoros
+      }
+
+      // ============================================================
+      // 7. AÇÕES DO POMODORO
+      // ============================================================
+      function onPomodoroComplete() {
+        const combo = state.combinations[state.currentIndex];
+        if (!combo) return;
+        if (combo.done) {
+          // Já estava feito, mas registra mesmo assim (não dá XP)
+          addHistory(combo.id, FOCUS_MINUTES);
+          return;
+        }
+        // Marcar como concluído
+        combo.done = true;
+        state.xp += 10;
+        state.gold += 5;
+        const newLevel = getLevelFromXp(state.xp);
+        const levelUp = newLevel > state.level;
+        state.level = newLevel;
+        addHistory(combo.id, FOCUS_MINUTES);
+        saveState();
+        updateUI();
+
+        // Efeitos
+        playAlarm();
+        if (levelUp) {
+          showConfetti(60, 'levelup');
+        } else {
+          showConfetti(30, 'pomodoro');
+        }
+        // Verificar insígnias
+        const doneCount = getDoneCount();
+        const badges = getBadges(doneCount);
+        const unlockedNow = badges.filter(b => b.unlocked);
+        // Poderia mostrar notificação de insígnia, mas simplificamos.
+
+        // Avançar para próxima pendente
+        const nextIdx = findNextUndone(state.currentIndex + 1);
+        if (nextIdx !== -1) {
+          state.currentIndex = nextIdx;
+          saveState();
+          updateUI();
+          resetTimer();
+        } else {
+          // Todas concluídas!
+          alert('🎊 PARABÉNS! Você concluiu todas as 2775 combinações! Você é uma lenda do foco!');
+        }
+      }
+
+      function findNextUndone(from) {
+        for (let i = from; i < state.combinations.length; i++) {
+          if (!state.combinations[i].done) return i;
+        }
+        for (let i = 0; i < from; i++) {
+          if (!state.combinations[i].done) return i;
+        }
+        return -1;
+      }
+
+      function addHistory(comboId, durationMinutes) {
+        state.history.push({
+          timestamp: new Date().toISOString(),
+          comboId: comboId,
+          duration: durationMinutes
+        });
+        if (state.history.length > 1000) state.history.shift(); // limite
+      }
+
+      // ============================================================
+      // 8. ALARME
+      // ============================================================
+      function playAlarm() {
+        try {
+          const ctx = new(window.AudioContext || window.webkitAudioContext)();
+          // dois beeps
+          [0, 0.3].forEach(delay => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = 'sine';
+            osc.frequency.value = 880;
+            gain.gain.setValueAtTime(0.3, ctx.currentTime + delay);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + delay + 0.5);
+            osc.start(ctx.currentTime + delay);
+            osc.stop(ctx.currentTime + delay + 0.5);
+          });
+        } catch (_) {}
+      }
+
+      // ============================================================
+      // 9. CONFETES
+      // ============================================================
+      function showConfetti(count = 30, type = 'default') {
+        const container = $('confettiContainer');
+        const colors = ['#f39c12', '#e74c3c', '#2ecc71', '#3498db', '#f1c40f', '#9b59b6', '#1abc9c'];
+        for (let i = 0; i < count; i++) {
+          const el = document.createElement('div');
+          el.className = 'confetti';
+          const size = 6 + Math.random() * 10;
+          const color = colors[Math.floor(Math.random() * colors.length)];
+          const left = Math.random() * 100;
+          const delay = Math.random() * 0.8;
+          const duration = 1.2 + Math.random() * 1.6;
+          const rotate = Math.random() * 720;
+          el.style.cssText = `
+            left: ${left}%;
+            top: -10px;
+            width: ${size}px;
+            height: ${size * 0.6}px;
+            background: ${color};
+            border-radius: 2px;
+            animation: confettiFall ${duration}s ease-out ${delay}s forwards;
+            transform: rotate(${rotate}deg);
+          `;
+          container.appendChild(el);
+          setTimeout(() => el.remove(), (duration + delay) * 1000 + 200);
+        }
+      }
+
+      // ============================================================
+      // 10. ATUALIZAR UI PRINCIPAL
+      // ============================================================
+      function updateUI() {
+        const combo = state.combinations[state.currentIndex];
+        if (!combo) return;
+        sound1Name.textContent = combo.sound1;
+        sound1Cat.textContent = combo.cat1;
+        sound2Name.textContent = combo.sound2;
+        sound2Cat.textContent = combo.cat2;
+        comboId.textContent = `#${combo.id} de 2775`;
+        if (combo.done) {
+          comboStatus.innerHTML = '✅ <span class="done">Concluído!</span>';
+        } else {
+          comboStatus.innerHTML = '⏳ <span class="pending">Pendente</span>';
+        }
+
+        xpDisplay.textContent = state.xp;
+        levelDisplay.textContent = state.level;
+        goldDisplay.textContent = state.gold;
+        doneDisplay.textContent = getDoneCount();
+
+        // Atualizar botões navegação
+        prevBtn.disabled = state.currentIndex === 0;
+        nextBtn.disabled = state.currentIndex === state.combinations.length - 1;
+
+        // Atualizar estatísticas se modal aberto
+        if (statsModal.classList.contains('active')) {
+          updateStatsModal();
+        }
+      }
+
+      // ============================================================
+      // 11. CATÁLOGO
+      // ============================================================
+      function populateCatalogFilters() {
+        const categories = new Set();
+        SOUNDS.forEach(s => categories.add(s.category));
+        const catSelect = catalogCategoryFilter;
+        catSelect.innerHTML = '<option value="">Todas as categorias</option>';
+        categories.forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c;
+          opt.textContent = c;
+          catSelect.appendChild(opt);
+        });
+      }
+
+      function renderCatalog(page) {
+        const search = catalogSearch.value.toLowerCase();
+        const catFilter = catalogCategoryFilter.value;
+        const statusFilter = catalogStatusFilter.value;
+
+        let filtered = state.combinations.filter(c => {
+          const matchSearch = c.id.toString().includes(search) ||
+            c.sound1.toLowerCase().includes(search) ||
+            c.sound2.toLowerCase().includes(search);
+          const matchCat = !catFilter || c.cat1 === catFilter || c.cat2 === catFilter;
+          const matchStatus = !statusFilter || (statusFilter === 'done' && c.done) || (statusFilter === 'pending' && !c.done);
+          return matchSearch && matchCat && matchStatus;
+        });
+
+        const total = filtered.length;
+        const totalPages = Math.ceil(total / CATALOG_PER_PAGE);
+        if (page >= totalPages) page = totalPages - 1;
+        if (page < 0) page = 0;
+        catalogPage = page;
+
+        const start = page * CATALOG_PER_PAGE;
+        const end = Math.min(start + CATALOG_PER_PAGE, total);
+        const pageItems = filtered.slice(start, end);
+
+        catalogList.innerHTML = '';
+        pageItems.forEach(c => {
+          const div = document.createElement('div');
+          div.className = 'catalog-item';
+          div.innerHTML = `
+            <span class="catalog-id">#${c.id}</span>
+            <span class="catalog-sounds">${c.sound1} (${c.cat1}) ✦ ${c.sound2} (${c.cat2})</span>
+            <span class="catalog-status ${c.done ? 'done' : 'pending'}">${c.done ? '✅ Concluído' : '⏳ Pendente'}</span>
+          `;
+          div.addEventListener('click', () => {
+            state.currentIndex = state.combinations.indexOf(c);
+            saveState();
+            updateUI();
+            resetTimer();
+            catalogModal.classList.remove('active');
+          });
+          catalogList.appendChild(div);
+        });
+
+        // Paginação
+        catalogPagination.innerHTML = '';
+        if (totalPages > 1) {
+          const prevBtnPag = document.createElement('button');
+          prevBtnPag.className = 'btn btn-secondary btn-sm';
+          prevBtnPag.textContent = '◀';
+          prevBtnPag.disabled = page === 0;
+          prevBtnPag.addEventListener('click', () => renderCatalog(page - 1));
+          catalogPagination.appendChild(prevBtnPag);
+
+          const info = document.createElement('span');
+          info.style.cssText = 'color:#aaa; padding:0 8px;';
+          info.textContent = `${page+1} / ${totalPages}`;
+          catalogPagination.appendChild(info);
+
+          const nextBtnPag = document.createElement('button');
+          nextBtnPag.className = 'btn btn-secondary btn-sm';
+          nextBtnPag.textContent = '▶';
+          nextBtnPag.disabled = page === totalPages - 1;
+          nextBtnPag.addEventListener('click', () => renderCatalog(page + 1));
+          catalogPagination.appendChild(nextBtnPag);
+        }
+      }
+
+      // ============================================================
+      // 12. ESTATÍSTICAS
+      // ============================================================
+      function updateStatsModal() {
+        const doneCount = getDoneCount();
+        statTotal.textContent = doneCount;
+        statXp.textContent = state.xp;
+        statGold.textContent = state.gold;
+        statLevel.textContent = state.level;
+
+        // Insígnias
+        const badges = getBadges(doneCount);
+        badgesGrid.innerHTML = '';
+        badges.forEach(b => {
+          const div = document.createElement('div');
+          div.className = `badge-item ${b.unlocked ? '' : 'locked'}`;
+          div.innerHTML = `<span class="badge-icon">${b.unlocked ? '🏅' : '🔒'}</span> ${b.label}`;
+          badgesGrid.appendChild(div);
+        });
+
+        // Histórico
+        const history = state.history.slice(-50).reverse(); // últimos 50
+        historyBody.innerHTML = '';
+        history.forEach(h => {
+          const tr = document.createElement('tr');
+          const date = new Date(h.timestamp);
+          const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+          tr.innerHTML = `<td>${dateStr}</td><td>#${h.comboId}</td><td>${h.duration} min</td>`;
+          historyBody.appendChild(tr);
+        });
+
+        // Gráfico (barras por categoria)
+        drawCategoryChart();
+      }
+
+      function drawCategoryChart() {
+        const canvas = $('statsChart');
+        const ctx = canvas.getContext('2d');
+        const rect = canvas.parentElement.getBoundingClientRect();
+        const w = Math.min(rect.width - 32, 600);
+        const h = 150;
+        canvas.width = w;
+        canvas.height = h;
+
+        // Contar combinações concluídas por categoria (som1 e som2)
+        const catCount = {};
+        state.combinations.forEach(c => {
+          if (c.done) {
+            catCount[c.cat1] = (catCount[c.cat1] || 0) + 1;
+            catCount[c.cat2] = (catCount[c.cat2] || 0) + 1;
+          }
+        });
+        const categories = Object.keys(catCount);
+        const maxVal = Math.max(...Object.values(catCount), 1);
+
+        ctx.clearRect(0, 0, w, h);
+        const barWidth = Math.min(30, (w - 20) / categories.length);
+        const spacing = 4;
+        const totalBarWidth = barWidth + spacing;
+        const startX = 10;
+
+        categories.forEach((cat, i) => {
+          const val = catCount[cat];
+          const x = startX + i * totalBarWidth;
+          const barHeight = (val / maxVal) * (h - 30);
+          const y = h - 10 - barHeight;
+          ctx.fillStyle = '#f39c12';
+          ctx.fillRect(x, y, barWidth, barHeight);
+          ctx.fillStyle = '#ccc';
+          ctx.font = '10px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(cat.slice(0, 6), x + barWidth / 2, h - 2);
+          ctx.fillStyle = '#ffd966';
+          ctx.font = '9px sans-serif';
+          ctx.fillText(val, x + barWidth / 2, y - 4);
+        });
+      }
+
+      // ============================================================
+      // 13. LABORATÓRIO DE SONS (Web Audio)
+      // ============================================================
+      let labAudioContext = null;
+      let labSource = null;
+      let labGainNode = null;
+      let labFilter = null;
+      let labOscillator = null;
+      let labNoiseBuffer = null;
+
+      function initLabAudio() {
+        if (!labAudioContext) {
+          labAudioContext = new(window.AudioContext || window.webkitAudioContext)();
+        }
+        return labAudioContext;
+      }
+
+      function generateNoiseBuffer(ctx, duration = 2) {
+        const sampleRate = ctx.sampleRate;
+        const bufferSize = sampleRate * duration;
+        const buffer = ctx.createBuffer(1, bufferSize, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = Math.random() * 2 - 1;
+        }
+        return buffer;
+      }
+
+      function playLabSound() {
+        try {
+          const ctx = initLabAudio();
+          if (labSource) {
+            labSource.stop();
+            labSource.disconnect();
+            labSource = null;
+          }
+          if (labOscillator) {
+            labOscillator.stop();
+            labOscillator.disconnect();
+            labOscillator = null;
+          }
+
+          const volume = parseFloat(labVolume.value);
+          const type = labSoundSelect.value;
+
+          labGainNode = ctx.createGain();
+          labGainNode.gain.value = volume;
+
+          // Criar filtro
+          labFilter = ctx.createBiquadFilter();
+          labFilter.type = 'lowpass';
+
+          // Gerar som conforme tipo
+          if (type === 'chuva') {
+            // Ruído branco filtrado
+            const buffer = generateNoiseBuffer(ctx, 3);
+            labSource = ctx.createBufferSource();
+            labSource.buffer = buffer;
+            labSource.loop = true;
+            labFilter.frequency.value = 3000;
+            labFilter.Q.value = 0.5;
+            labSource.connect(labFilter);
+            labFilter.connect(labGainNode);
+            labGainNode.connect(ctx.destination);
+            labSource.start();
+            labStatus.textContent = '🌧️ Chuva';
+          } else if (type === 'ondas') {
+            // Ruído marrom + oscilador LFO para ondulação
+            const buffer = generateNoiseBuffer(ctx, 3);
+            labSource = ctx.createBufferSource();
+            labSource.buffer = buffer;
+            labSource.loop = true;
+            labFilter.frequency.value = 800;
+            labFilter.Q.value = 1.5;
+            // Modulação de amplitude com oscilador lento
+            const lfo = ctx.createOscillator();
+            const lfoGain = ctx.createGain();
+            lfo.frequency.value = 0.3;
+            lfoGain.gain.value = 0.3;
+            lfo.connect(lfoGain);
+            lfoGain.connect(labGainNode.gain);
+            lfo.start();
+            labSource.connect(labFilter);
+            labFilter.connect(labGainNode);
+            labGainNode.connect(ctx.destination);
+            labSource.start();
+            labStatus.textContent = '🌊 Ondas';
+            // guardar lfo para parar
+            labOscillator = lfo;
+          } else if (type === 'floresta') {
+            // Ruído rosa + alguns chirps (simples)
+            const buffer = generateNoiseBuffer(ctx, 3);
+            labSource = ctx.createBufferSource();
+            labSource.buffer = buffer;
+            labSource.loop = true;
+            labFilter.frequency.value = 2000;
+            labFilter.Q.value = 0.3;
+            labSource.connect(labFilter);
+            labFilter.connect(labGainNode);
+            labGainNode.connect(ctx.destination);
+            labSource.start();
+            labStatus.textContent = '🌲 Floresta';
+          } else if (type === 'vento') {
+            // Ruído filtrado passa-baixa com variação
+            const buffer = generateNoiseBuffer(ctx, 3);
+            labSource = ctx.createBufferSource();
+            labSource.buffer = buffer;
+            labSource.loop = true;
+            labFilter.type = 'bandpass';
+            labFilter.frequency.value = 600;
+            labFilter.Q.value = 0.5;
+            // Modulação de frequência com LFO
+            const lfoFreq = ctx.createOscillator();
+            const lfoFreqGain = ctx.createGain();
+            lfoFreq.frequency.value = 0.2;
+            lfoFreqGain.gain.value = 200;
+            lfoFreq.connect(lfoFreqGain);
+            lfoFreqGain.connect(labFilter.frequency);
+            lfoFreq.start();
+            labSource.connect(labFilter);
+            labFilter.connect(labGainNode);
+            labGainNode.connect(ctx.destination);
+            labSource.start();
+            labStatus.textContent = '💨 Vento';
+            labOscillator = lfoFreq;
+          }
+        } catch (e) {
+          labStatus.textContent = '⚠️ Erro ao gerar som';
+          console.error(e);
+        }
+      }
+
+      function stopLabSound() {
+        if (labSource) {
+          labSource.stop();
+          labSource.disconnect();
+          labSource = null;
+        }
+        if (labOscillator) {
+          labOscillator.stop();
+          labOscillator.disconnect();
+          labOscillator = null;
+        }
+        if (labGainNode) {
+          labGainNode.disconnect();
+          labGainNode = null;
+        }
+        if (labFilter) {
+          labFilter.disconnect();
+          labFilter = null;
+        }
+        labStatus.textContent = '⏸ Parado';
+      }
+
+      // ============================================================
+      // 14. EXPORT / IMPORT
+      // ============================================================
+      function exportBackup() {
+        const data = JSON.stringify(state, null, 2);
+        const blob = new Blob([data], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `pomodoro_backup_${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      function importBackup(file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const data = JSON.parse(e.target.result);
+            if (data.combinations && data.combinations.length === 2775 &&
+              typeof data.xp === 'number' && typeof data.gold === 'number' &&
+              typeof data.level === 'number' && Array.isArray(data.history) &&
+              typeof data.currentIndex === 'number') {
+              state = data;
+              saveState();
+              updateUI();
+              resetTimer();
+              alert('✅ Backup importado com sucesso!');
+              statsModal.classList.remove('active');
+            } else {
+              alert('❌ Arquivo inválido.');
+            }
+          } catch (_) {
+            alert('❌ Erro ao ler arquivo.');
+          }
+        };
+        reader.readAsText(file);
+      }
+
+      function exportHistoryCsv() {
+        if (state.history.length === 0) {
+          alert('Nenhum histórico para exportar.');
+          return;
+        }
+        let csv = 'Data,Combinação,Duração (min)\n';
+        state.history.forEach(h => {
+          const date = new Date(h.timestamp);
+          const dateStr = date.toLocaleString();
+          csv += `"${dateStr}","#${h.comboId}",${h.duration}\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `historico_pomodoros_${new Date().toISOString().slice(0,10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      // ============================================================
+      // 15. EVENT LISTENERS
+      // ============================================================
+      // Timer
+      startBtn.addEventListener('click', () => {
+        if (state.combinations[state.currentIndex].done) {
+          alert('Esta combinação já foi concluída! Avance para a próxima.');
+          return;
+        }
+        if (timerState === 'paused') {
+          pauseTimer(); // retoma
+          return;
+        }
+        startTimer();
+      });
+
+      pauseBtn.addEventListener('click', pauseTimer);
+      resetBtn.addEventListener('click', resetTimer);
+
+      completeOutsideBtn.addEventListener('click', () => {
+        const combo = state.combinations[state.currentIndex];
+        if (combo.done) {
+          alert('Já está concluída!');
+          return;
+        }
+        if (confirm('Marcar esta combinação como concluída (sem timer)?')) {
+          combo.done = true;
+          state.xp += 5; // menos XP que completo
+          state.gold += 2;
+          const newLevel = getLevelFromXp(state.xp);
+          if (newLevel > state.level) state.level = newLevel;
+          addHistory(combo.id, 0);
+          saveState();
+          updateUI();
+          showConfetti(20, 'outside');
+          const nextIdx = findNextUndone(state.currentIndex + 1);
+          if (nextIdx !== -1) {
+            state.currentIndex = nextIdx;
+            saveState();
+            updateUI();
+            resetTimer();
+          }
+        }
+      });
+
+      // Navegação
+      prevBtn.addEventListener('click', () => {
+        if (state.currentIndex > 0) {
+          if (timerState === 'running' || timerState === 'paused') {
+            if (!confirm('Timer em andamento. Parar e ir para anterior?')) return;
+            stopTimer();
+          }
+          state.currentIndex--;
+          saveState();
+          updateUI();
+          resetTimer();
+        }
+      });
+
+      nextBtn.addEventListener('click', () => {
+        if (state.currentIndex < state.combinations.length - 1) {
+          if (timerState === 'running' || timerState === 'paused') {
+            if (!confirm('Timer em andamento. Parar e ir para próxima?')) return;
+            stopTimer();
+          }
+          state.currentIndex++;
+          saveState();
+          updateUI();
+          resetTimer();
+        }
+      });
+
+      randomBtn.addEventListener('click', () => {
+        const undone = state.combinations.filter(c => !c.done);
+        if (undone.length === 0) {
+          alert('🎉 Todas as combinações estão concluídas!');
+          return;
+        }
+        const rand = undone[Math.floor(Math.random() * undone.length)];
+        const idx = state.combinations.indexOf(rand);
+        if (timerState === 'running' || timerState === 'paused') {
+          if (!confirm('Timer em andamento. Parar e ir para aleatória?')) return;
+          stopTimer();
+        }
+        state.currentIndex = idx;
+        saveState();
+        updateUI();
+        resetTimer();
+      });
+
+      // Modals
+      modalCloses.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const modalId = btn.dataset.modal;
+          document.getElementById(modalId).classList.remove('active');
+        });
+      });
+
+      document.querySelectorAll('.modal-overlay').forEach(overlay => {
+        overlay.addEventListener('click', (e) => {
+          if (e.target === overlay) overlay.classList.remove('active');
+        });
+      });
+
+      $('openCatalogBtn').addEventListener('click', () => {
+        catalogModal.classList.add('active');
+        renderCatalog(0);
+      });
+
+      $('openStatsBtn').addEventListener('click', () => {
+        statsModal.classList.add('active');
+        updateStatsModal();
+      });
+
+      $('openLabBtn').addEventListener('click', () => {
+        labModal.classList.add('active');
+      });
+
+      // Catalog filters
+      catalogSearch.addEventListener('input', () => renderCatalog(0));
+      catalogCategoryFilter.addEventListener('change', () => renderCatalog(0));
+      catalogStatusFilter.addEventListener('change', () => renderCatalog(0));
+
+      // Lab
+      labPlayBtn.addEventListener('click', playLabSound);
+      labStopBtn.addEventListener('click', stopLabSound);
+      labVolume.addEventListener('input', () => {
+        if (labGainNode) labGainNode.gain.value = parseFloat(labVolume.value);
+      });
+
+      // Stats: export/import
+      $('exportHistoryCsvBtn').addEventListener('click', exportHistoryCsv);
+      $('exportBackupBtn').addEventListener('click', exportBackup);
+      $('importBackupBtn').addEventListener('click', () => {
+        $('importFileInput').click();
+      });
+      $('importFileInput').addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+          importBackup(e.target.files[0]);
+          e.target.value = '';
+        }
+      });
+
+      // Teclado
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft' && !catalogModal.classList.contains('active')) {
+          prevBtn.click();
+        } else if (e.key === 'ArrowRight' && !catalogModal.classList.contains('active')) {
+          nextBtn.click();
+        }
+      });
+
+      // ============================================================
+      // 16. INICIALIZAÇÃO
+      // ============================================================
+      populateCatalogFilters();
+      setPhase('focus');
+      updateUI();
+      resetTimer();
+
+      console.log('🎧 Pomodoro Sonoro RPG carregado!');
+      console.log(`Combinações: ${state.combinations.length}, Concluídas: ${getDoneCount()}`);
+    })();
+  </script>
+</body>
+</html>
