@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎧 Pomodoro Sonoro - Gamificação</title>
+  <title>🎧 Pomodoro Sonoro – Ellenkrisferreira</title>
   <style>
     /* === RESET & BASE === */
     * {
@@ -11,7 +11,6 @@
       margin: 0;
       padding: 0;
     }
-
     body {
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
       background: #12121c;
@@ -22,7 +21,6 @@
       justify-content: center;
       align-items: center;
     }
-
     .app {
       max-width: 1100px;
       width: 100%;
@@ -32,10 +30,7 @@
       padding: 28px 24px 32px;
       border: 1px solid rgba(255, 255, 255, 0.06);
       box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
-      transition: all 0.2s;
     }
-
-    /* === HEADER === */
     .header {
       display: flex;
       flex-wrap: wrap;
@@ -44,7 +39,6 @@
       gap: 16px;
       margin-bottom: 24px;
     }
-
     .header h1 {
       font-size: 1.9rem;
       font-weight: 700;
@@ -53,7 +47,6 @@
       -webkit-text-fill-color: transparent;
       letter-spacing: -0.5px;
     }
-
     .header-stats {
       display: flex;
       flex-wrap: wrap;
@@ -63,19 +56,15 @@
       padding: 8px 20px;
       border-radius: 40px;
     }
-
     .header-stats span {
       display: flex;
       align-items: center;
       gap: 6px;
     }
-
     .header-stats .num {
       font-weight: 700;
       color: #ffd966;
     }
-
-    /* === MAIN CARD (combinação + timer) === */
     .main-card {
       background: rgba(255, 255, 255, 0.05);
       border-radius: 30px;
@@ -83,7 +72,6 @@
       margin-bottom: 25px;
       border: 1px solid rgba(255, 255, 255, 0.06);
     }
-
     .combo-header {
       display: flex;
       justify-content: space-between;
@@ -92,16 +80,13 @@
       gap: 10px;
       margin-bottom: 12px;
     }
-
     .combo-id {
       font-size: 0.9rem;
       color: #aaa;
     }
-
     .combo-status {
       font-size: 0.9rem;
     }
-
     .combo-status .done {
       color: #6fcf97;
       font-weight: 600;
@@ -109,7 +94,6 @@
     .combo-status .pending {
       color: #f2994a;
     }
-
     .combo-sounds {
       display: flex;
       justify-content: center;
@@ -118,7 +102,6 @@
       flex-wrap: wrap;
       margin: 8px 0 12px;
     }
-
     .sound-pill {
       background: rgba(0, 0, 0, 0.35);
       padding: 8px 22px;
@@ -126,48 +109,39 @@
       border-left: 4px solid #f39c12;
       text-align: center;
     }
-
     .sound-pill .name {
       font-size: 1.4rem;
       font-weight: 600;
     }
-
     .sound-pill .cat {
       font-size: 0.75rem;
       color: #bbb;
       margin-top: 2px;
     }
-
     .vs {
       font-size: 1.6rem;
       color: #777;
       font-weight: 300;
     }
-
-    /* Timer */
     .timer-area {
       display: flex;
       flex-direction: column;
       align-items: center;
       margin: 16px 0 14px;
     }
-
     .timer-circle {
       position: relative;
       width: 170px;
       height: 170px;
     }
-
     .timer-circle svg {
       transform: rotate(-90deg);
     }
-
     .timer-circle .bg {
       fill: none;
       stroke: rgba(255, 255, 255, 0.08);
       stroke-width: 8;
     }
-
     .timer-circle .progress {
       fill: none;
       stroke: #f39c12;
@@ -175,7 +149,6 @@
       stroke-linecap: round;
       transition: stroke-dashoffset 0.3s ease;
     }
-
     .timer-text {
       position: absolute;
       top: 50%;
@@ -186,13 +159,11 @@
       color: #fff;
       letter-spacing: 1px;
     }
-
     .timer-phase {
       font-size: 0.9rem;
       color: #aaa;
       margin-top: 2px;
     }
-
     .timer-controls {
       display: flex;
       flex-wrap: wrap;
@@ -200,7 +171,6 @@
       gap: 12px;
       margin-top: 14px;
     }
-
     .btn {
       background: rgba(255, 255, 255, 0.07);
       border: none;
@@ -216,65 +186,48 @@
       gap: 8px;
       border: 1px solid transparent;
     }
-
     .btn:hover {
       background: rgba(255, 255, 255, 0.14);
       transform: scale(1.02);
     }
-
     .btn:active {
       transform: scale(0.97);
     }
-
     .btn-primary {
       background: #f39c12;
       color: #12121c;
     }
-
     .btn-primary:hover {
       background: #f1c40f;
     }
-
     .btn-primary:disabled {
       opacity: 0.4;
       cursor: not-allowed;
       transform: none;
     }
-
     .btn-secondary {
       background: rgba(255, 255, 255, 0.06);
       border-color: rgba(255, 255, 255, 0.12);
     }
-
     .btn-success {
       background: #27ae60;
       color: #fff;
     }
-
     .btn-success:hover {
       background: #2ecc71;
     }
-
     .btn-outline {
       background: transparent;
       border: 1px solid rgba(255, 255, 255, 0.15);
     }
-
     .btn-danger {
       background: #e74c3c;
       color: #fff;
     }
-
-    .btn-danger:hover {
-      background: #c0392b;
-    }
-
     .btn-sm {
       padding: 6px 16px;
       font-size: 0.8rem;
     }
-
-    /* === NAVEGAÇÃO ENTRE COMBOS === */
     .combo-nav {
       display: flex;
       justify-content: center;
@@ -282,8 +235,6 @@
       flex-wrap: wrap;
       margin-top: 10px;
     }
-
-    /* === BOTÕES DE SEÇÕES === */
     .section-buttons {
       display: flex;
       flex-wrap: wrap;
@@ -291,8 +242,6 @@
       gap: 12px;
       margin: 16px 0 8px;
     }
-
-    /* === MODALS === */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -307,11 +256,9 @@
       z-index: 1000;
       padding: 20px;
     }
-
     .modal-overlay.active {
       display: flex;
     }
-
     .modal {
       background: #1e1e2e;
       border-radius: 32px;
@@ -324,19 +271,16 @@
       box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
       position: relative;
     }
-
     .modal-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
     }
-
     .modal-header h2 {
       font-size: 1.6rem;
       font-weight: 600;
     }
-
     .modal-close {
       background: none;
       border: none;
@@ -346,19 +290,15 @@
       padding: 0 8px;
       transition: color 0.2s;
     }
-
     .modal-close:hover {
       color: #fff;
     }
-
-    /* === CATÁLOGO === */
     .catalog-filters {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
       margin-bottom: 18px;
     }
-
     .catalog-filters input,
     .catalog-filters select {
       background: rgba(255, 255, 255, 0.06);
@@ -369,11 +309,9 @@
       font-size: 0.9rem;
       flex: 1 1 160px;
     }
-
     .catalog-filters input::placeholder {
       color: #888;
     }
-
     .catalog-list {
       display: flex;
       flex-direction: column;
@@ -382,7 +320,6 @@
       overflow-y: auto;
       padding-right: 4px;
     }
-
     .catalog-item {
       display: flex;
       justify-content: space-between;
@@ -395,38 +332,31 @@
       cursor: pointer;
       transition: background 0.15s;
     }
-
     .catalog-item:hover {
       background: rgba(255, 255, 255, 0.07);
     }
-
     .catalog-item .catalog-id {
       color: #888;
       min-width: 60px;
     }
-
     .catalog-item .catalog-sounds {
       flex: 1;
       padding: 0 12px;
     }
-
     .catalog-item .catalog-status {
       font-size: 0.8rem;
       padding: 2px 12px;
       border-radius: 20px;
       background: rgba(255, 255, 255, 0.05);
     }
-
     .catalog-item .catalog-status.done {
       background: rgba(46, 204, 113, 0.2);
       color: #6fcf97;
     }
-
     .catalog-item .catalog-status.pending {
       background: rgba(242, 153, 74, 0.15);
       color: #f2994a;
     }
-
     .catalog-pagination {
       display: flex;
       justify-content: center;
@@ -434,59 +364,49 @@
       margin-top: 16px;
       flex-wrap: wrap;
     }
-
     .catalog-pagination .btn {
       padding: 4px 14px;
       font-size: 0.8rem;
     }
-
-    /* === ESTATÍSTICAS === */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
       gap: 16px;
       margin-bottom: 20px;
     }
-
     .stat-card {
       background: rgba(255, 255, 255, 0.04);
       padding: 16px;
       border-radius: 20px;
       text-align: center;
     }
-
     .stat-card .value {
       font-size: 2rem;
       font-weight: 700;
       color: #ffd966;
     }
-
     .stat-card .label {
       font-size: 0.8rem;
       color: #aaa;
       margin-top: 4px;
     }
-
     .chart-container {
       background: rgba(255, 255, 255, 0.03);
       border-radius: 20px;
       padding: 16px;
       margin: 12px 0;
     }
-
     .chart-container canvas {
       width: 100% !important;
       height: auto !important;
       max-height: 200px;
     }
-
     .badges-grid {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
       margin-top: 12px;
     }
-
     .badge-item {
       background: rgba(255, 215, 0, 0.1);
       border: 1px solid rgba(255, 215, 0, 0.2);
@@ -498,18 +418,14 @@
       align-items: center;
       gap: 6px;
     }
-
     .badge-item.locked {
       opacity: 0.3;
       border-color: rgba(255, 255, 255, 0.08);
       color: #888;
     }
-
     .badge-item .badge-icon {
       font-size: 1rem;
     }
-
-    /* === LABORATÓRIO DE SONS === */
     .lab-controls {
       display: flex;
       flex-wrap: wrap;
@@ -517,7 +433,6 @@
       align-items: center;
       margin-bottom: 16px;
     }
-
     .lab-controls select,
     .lab-controls input[type="range"] {
       background: rgba(255, 255, 255, 0.06);
@@ -527,19 +442,15 @@
       border-radius: 30px;
       font-size: 0.9rem;
     }
-
     .lab-controls input[type="range"] {
       width: 120px;
       padding: 0;
       accent-color: #f39c12;
     }
-
     .lab-status {
       font-size: 0.9rem;
       color: #aaa;
     }
-
-    /* === ATMOSPHERE CARD === */
     .atmosphere-card {
       background: linear-gradient(135deg, rgba(243, 156, 18, 0.12), rgba(241, 196, 15, 0.05));
       border: 1px solid rgba(243, 156, 18, 0.2);
@@ -552,43 +463,35 @@
       justify-content: space-between;
       gap: 12px;
     }
-
     .atmosphere-card p {
       font-size: 0.95rem;
       color: #ddd;
     }
-
     .atmosphere-card a {
       color: #f1c40f;
       text-decoration: none;
       font-weight: 600;
       border-bottom: 1px dotted rgba(241, 196, 15, 0.3);
     }
-
     .atmosphere-card a:hover {
       color: #f9d976;
     }
-
-    /* === HISTÓRICO === */
     .history-table-wrap {
       max-height: 200px;
       overflow-y: auto;
       margin: 12px 0;
     }
-
     .history-table {
       width: 100%;
       border-collapse: collapse;
       font-size: 0.8rem;
     }
-
     .history-table th,
     .history-table td {
       padding: 6px 10px;
       text-align: left;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
-
     .history-table th {
       color: #aaa;
       font-weight: 500;
@@ -596,15 +499,12 @@
       top: 0;
       background: #1e1e2e;
     }
-
     .export-btns {
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
       margin-top: 12px;
     }
-
-    /* === CONFETES === */
     .confetti-container {
       position: fixed;
       top: 0;
@@ -615,14 +515,12 @@
       z-index: 9999;
       overflow: hidden;
     }
-
     .confetti {
       position: absolute;
       width: 10px;
       height: 10px;
       opacity: 0;
     }
-
     @keyframes confettiFall {
       0% {
         opacity: 1;
@@ -633,8 +531,6 @@
         transform: translateY(100vh) rotate(720deg) scale(0.2);
       }
     }
-
-    /* === SCROLLBAR === */
     ::-webkit-scrollbar {
       width: 6px;
     }
@@ -645,8 +541,6 @@
       background: rgba(255, 255, 255, 0.15);
       border-radius: 10px;
     }
-
-    /* === RESPONSIVE === */
     @media (max-width: 700px) {
       .app {
         padding: 16px 12px;
@@ -680,7 +574,6 @@
 </head>
 <body>
   <div class="app" id="app">
-    <!-- HEADER -->
     <div class="header">
       <h1>🎵 Pomodoro Sonoro</h1>
       <div class="header-stats">
@@ -691,7 +584,6 @@
       </div>
     </div>
 
-    <!-- MAIN CARD -->
     <div class="main-card">
       <div class="combo-header">
         <span class="combo-id" id="comboId">#1</span>
@@ -735,21 +627,19 @@
       </div>
     </div>
 
-    <!-- BOTÕES DE SEÇÕES -->
     <div class="section-buttons">
       <button class="btn btn-secondary" id="openCatalogBtn">📚 Catálogo</button>
       <button class="btn btn-secondary" id="openStatsBtn">📊 Estatísticas</button>
       <button class="btn btn-secondary" id="openLabBtn">🎛️ Laboratório</button>
     </div>
 
-    <!-- ATMOSPHERE CARD -->
     <div class="atmosphere-card">
       <p>🎧 <strong>Atmosphere: Relaxing Sounds</strong> – Todos os sons da lista disponíveis no app oficial.</p>
       <a href="https://apps.apple.com/us/app/atmosphere-relaxing-sounds/id1259186300" target="_blank">Baixar na App Store →</a>
     </div>
   </div>
 
-  <!-- MODAL: CATÁLOGO -->
+  <!-- MODAL CATÁLOGO -->
   <div class="modal-overlay" id="catalogModal">
     <div class="modal">
       <div class="modal-header">
@@ -758,10 +648,7 @@
       </div>
       <div class="catalog-filters">
         <input type="text" id="catalogSearch" placeholder="Buscar som ou ID..." />
-        <select id="catalogCategoryFilter">
-          <option value="">Todas as categorias</option>
-          <!-- preenchido via JS -->
-        </select>
+        <select id="catalogCategoryFilter"><option value="">Todas as categorias</option></select>
         <select id="catalogStatusFilter">
           <option value="">Todos os status</option>
           <option value="done">Concluído</option>
@@ -773,7 +660,7 @@
     </div>
   </div>
 
-  <!-- MODAL: ESTATÍSTICAS -->
+  <!-- MODAL ESTATÍSTICAS -->
   <div class="modal-overlay" id="statsModal">
     <div class="modal">
       <div class="modal-header">
@@ -793,7 +680,7 @@
         <h3>🏅 Insígnias</h3>
         <div class="badges-grid" id="badgesGrid"></div>
       </div>
-      <div style="margin-top: 16px;">
+      <div style="margin-top:16px;">
         <h3>📜 Histórico de Sessões</h3>
         <div class="history-table-wrap">
           <table class="history-table" id="historyTable">
@@ -811,7 +698,7 @@
     </div>
   </div>
 
-  <!-- MODAL: LABORATÓRIO DE SONS -->
+  <!-- MODAL LABORATÓRIO -->
   <div class="modal-overlay" id="labModal">
     <div class="modal">
       <div class="modal-header">
@@ -834,16 +721,12 @@
     </div>
   </div>
 
-  <!-- CONFETES -->
   <div class="confetti-container" id="confettiContainer"></div>
 
   <script>
     (function() {
       'use strict';
 
-      // ============================================================
-      // 1. DADOS: 75 SONS
-      // ============================================================
       const SOUNDS = [
         { name: 'Aeroporto', category: 'Urbano' },
         { name: 'Andantino', category: 'Instrumental' },
@@ -922,9 +805,6 @@
         { name: 'Viola', category: 'Praia' }
       ];
 
-      // ============================================================
-      // 2. GERAR COMBINAÇÕES (2775)
-      // ============================================================
       function generateCombinations() {
         const combos = [];
         for (let i = 0; i < SOUNDS.length; i++) {
@@ -942,19 +822,15 @@
         return combos;
       }
 
-      // ============================================================
-      // 3. ESTADO E PERSISTÊNCIA
-      // ============================================================
       const STORAGE_KEY = 'pomodoro_sound_rpg';
 
       function defaultState() {
-        const combos = generateCombinations();
         return {
-          combinations: combos,
+          combinations: generateCombinations(),
           xp: 0,
           gold: 0,
           level: 1,
-          history: [], // { timestamp, comboId, duration }
+          history: [],
           currentIndex: 0,
         };
       }
@@ -964,7 +840,6 @@
           const raw = localStorage.getItem(STORAGE_KEY);
           if (raw) {
             const parsed = JSON.parse(raw);
-            // Verifica integridade
             if (parsed.combinations && parsed.combinations.length === 2775 &&
               typeof parsed.xp === 'number' && typeof parsed.gold === 'number' &&
               typeof parsed.level === 'number' && Array.isArray(parsed.history) &&
@@ -976,15 +851,12 @@
         return defaultState();
       }
 
+      let state = loadState();
+
       function saveState() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       }
 
-      let state = loadState();
-
-      // ============================================================
-      // 4. FUNÇÕES AUXILIARES
-      // ============================================================
       function getDoneCount() {
         return state.combinations.filter(c => c.done).length;
       }
@@ -1011,9 +883,6 @@
         }));
       }
 
-      // ============================================================
-      // 5. UI ELEMENTOS
-      // ============================================================
       const $ = id => document.getElementById(id);
       const sound1Name = $('sound1Name');
       const sound1Cat = $('sound1Cat');
@@ -1036,13 +905,11 @@
       const nextBtn = $('nextBtn');
       const randomBtn = $('randomBtn');
 
-      // Modals
       const catalogModal = $('catalogModal');
       const statsModal = $('statsModal');
       const labModal = $('labModal');
       const modalCloses = document.querySelectorAll('[data-modal]');
 
-      // Catalog
       const catalogList = $('catalogList');
       const catalogPagination = $('catalogPagination');
       const catalogSearch = $('catalogSearch');
@@ -1051,7 +918,6 @@
       let catalogPage = 0;
       const CATALOG_PER_PAGE = 50;
 
-      // Stats
       const statTotal = $('statTotal');
       const statXp = $('statXp');
       const statGold = $('statGold');
@@ -1059,27 +925,23 @@
       const badgesGrid = $('badgesGrid');
       const historyBody = $('historyBody');
 
-      // Lab
       const labSoundSelect = $('labSoundSelect');
       const labVolume = $('labVolume');
       const labPlayBtn = $('labPlayBtn');
       const labStopBtn = $('labStopBtn');
       const labStatus = $('labStatus');
 
-      // ============================================================
-      // 6. TIMER
-      // ============================================================
       const FOCUS_MINUTES = 25;
       const SHORT_BREAK_MINUTES = 5;
       const LONG_BREAK_MINUTES = 15;
       const TOTAL_FOCUS_SEC = FOCUS_MINUTES * 60;
-      const CIRCUMFERENCE = 2 * Math.PI * 73; // raio 73
+      const CIRCUMFERENCE = 2 * Math.PI * 73;
 
-      let timerState = 'idle'; // idle | running | paused | finished
+      let timerState = 'idle';
       let remainingSeconds = TOTAL_FOCUS_SEC;
       let timerInterval = null;
-      let currentPhase = 'focus'; // focus | shortBreak | longBreak
-      let pomodorosCompleted = 0; // contagem para pausa longa
+      let currentPhase = 'focus';
+      let pomodorosCompleted = 0;
 
       function updateTimerDisplay() {
         const mins = Math.floor(remainingSeconds / 60);
@@ -1124,7 +986,6 @@
       function startTimer() {
         if (timerState === 'running' || timerState === 'paused') return;
         if (remainingSeconds <= 0) {
-          // se acabou, reiniciar fase de foco
           setPhase('focus');
         }
         timerState = 'running';
@@ -1142,39 +1003,22 @@
             startBtn.disabled = false;
             pauseBtn.disabled = true;
             startBtn.textContent = '▶ Iniciar';
-            // Tocar alarme
             playAlarm();
-            // Verificar se é foco ou pausa
             if (currentPhase === 'focus') {
-              // Pomodoro concluído
               onPomodoroComplete();
-              // Incrementar contagem para pausa longa
               pomodorosCompleted++;
-              // Iniciar pausa automaticamente? Decidimos não iniciar automaticamente, deixar usuário escolher.
-              // Mas podemos sugerir: após foco, ficar em idle e mostrar botão "pausa curta" ou "pausa longa".
-              // Por simplicidade, após foco, resetamos para foco novamente e mostramos mensagem.
-              // Mas o comportamento esperado: após foco, pode-se iniciar pausa. Vamos apenas tocar alarme e marcar combo.
-              // O timer fica em 0, o usuário pode reiniciar ou resetar.
-              // Vamos deixar o timer zerado e o usuário deve clicar em "reset" para voltar a 25min.
-              // Porém, para melhor UX, após foco, mudamos para pausa curta automaticamente? O requisito diz "ciclos de 25 min foco, 5 min pausa curta, 15 min pausa longa". Então devemos iniciar a pausa automaticamente.
-              // Vamos iniciar pausa curta automaticamente (ou longa se múltiplo de 4).
               if (pomodorosCompleted % 4 === 0 && pomodorosCompleted > 0) {
                 setPhase('longBreak');
               } else {
                 setPhase('shortBreak');
               }
-              // Iniciar timer da pausa automaticamente
-              // Mas não inicia automaticamente, apenas prepara. Deixamos o usuário iniciar.
-              // Porém, para seguir o fluxo, vou iniciar a pausa automaticamente após 2 segundos.
               setTimeout(() => {
                 if (timerState === 'idle' && remainingSeconds > 0) {
                   startTimer();
                 }
               }, 1500);
             } else {
-              // Pausa terminou: voltar para foco
               setPhase('focus');
-              // Iniciar foco automaticamente
               setTimeout(() => {
                 if (timerState === 'idle' && remainingSeconds > 0) {
                   startTimer();
@@ -1194,7 +1038,6 @@
           startBtn.disabled = false;
           startBtn.textContent = '▶ Retomar';
         } else if (timerState === 'paused') {
-          // retomar
           timerState = 'running';
           pauseBtn.textContent = '⏸ Pausar';
           startBtn.disabled = true;
@@ -1243,21 +1086,15 @@
         startBtn.disabled = false;
         pauseBtn.disabled = true;
         startBtn.textContent = '▶ Iniciar';
-        // Não resetar contagem de pomodoros
       }
 
-      // ============================================================
-      // 7. AÇÕES DO POMODORO
-      // ============================================================
       function onPomodoroComplete() {
         const combo = state.combinations[state.currentIndex];
         if (!combo) return;
         if (combo.done) {
-          // Já estava feito, mas registra mesmo assim (não dá XP)
           addHistory(combo.id, FOCUS_MINUTES);
           return;
         }
-        // Marcar como concluído
         combo.done = true;
         state.xp += 10;
         state.gold += 5;
@@ -1267,21 +1104,12 @@
         addHistory(combo.id, FOCUS_MINUTES);
         saveState();
         updateUI();
-
-        // Efeitos
         playAlarm();
         if (levelUp) {
           showConfetti(60, 'levelup');
         } else {
           showConfetti(30, 'pomodoro');
         }
-        // Verificar insígnias
-        const doneCount = getDoneCount();
-        const badges = getBadges(doneCount);
-        const unlockedNow = badges.filter(b => b.unlocked);
-        // Poderia mostrar notificação de insígnia, mas simplificamos.
-
-        // Avançar para próxima pendente
         const nextIdx = findNextUndone(state.currentIndex + 1);
         if (nextIdx !== -1) {
           state.currentIndex = nextIdx;
@@ -1289,7 +1117,6 @@
           updateUI();
           resetTimer();
         } else {
-          // Todas concluídas!
           alert('🎊 PARABÉNS! Você concluiu todas as 2775 combinações! Você é uma lenda do foco!');
         }
       }
@@ -1310,16 +1137,12 @@
           comboId: comboId,
           duration: durationMinutes
         });
-        if (state.history.length > 1000) state.history.shift(); // limite
+        if (state.history.length > 1000) state.history.shift();
       }
 
-      // ============================================================
-      // 8. ALARME
-      // ============================================================
       function playAlarm() {
         try {
           const ctx = new(window.AudioContext || window.webkitAudioContext)();
-          // dois beeps
           [0, 0.3].forEach(delay => {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
@@ -1335,9 +1158,6 @@
         } catch (_) {}
       }
 
-      // ============================================================
-      // 9. CONFETES
-      // ============================================================
       function showConfetti(count = 30, type = 'default') {
         const container = $('confettiContainer');
         const colors = ['#f39c12', '#e74c3c', '#2ecc71', '#3498db', '#f1c40f', '#9b59b6', '#1abc9c'];
@@ -1365,9 +1185,6 @@
         }
       }
 
-      // ============================================================
-      // 10. ATUALIZAR UI PRINCIPAL
-      // ============================================================
       function updateUI() {
         const combo = state.combinations[state.currentIndex];
         if (!combo) return;
@@ -1387,19 +1204,14 @@
         goldDisplay.textContent = state.gold;
         doneDisplay.textContent = getDoneCount();
 
-        // Atualizar botões navegação
         prevBtn.disabled = state.currentIndex === 0;
         nextBtn.disabled = state.currentIndex === state.combinations.length - 1;
 
-        // Atualizar estatísticas se modal aberto
         if (statsModal.classList.contains('active')) {
           updateStatsModal();
         }
       }
 
-      // ============================================================
-      // 11. CATÁLOGO
-      // ============================================================
       function populateCatalogFilters() {
         const categories = new Set();
         SOUNDS.forEach(s => categories.add(s.category));
@@ -1456,7 +1268,6 @@
           catalogList.appendChild(div);
         });
 
-        // Paginação
         catalogPagination.innerHTML = '';
         if (totalPages > 1) {
           const prevBtnPag = document.createElement('button');
@@ -1480,9 +1291,6 @@
         }
       }
 
-      // ============================================================
-      // 12. ESTATÍSTICAS
-      // ============================================================
       function updateStatsModal() {
         const doneCount = getDoneCount();
         statTotal.textContent = doneCount;
@@ -1490,7 +1298,6 @@
         statGold.textContent = state.gold;
         statLevel.textContent = state.level;
 
-        // Insígnias
         const badges = getBadges(doneCount);
         badgesGrid.innerHTML = '';
         badges.forEach(b => {
@@ -1500,8 +1307,7 @@
           badgesGrid.appendChild(div);
         });
 
-        // Histórico
-        const history = state.history.slice(-50).reverse(); // últimos 50
+        const history = state.history.slice(-50).reverse();
         historyBody.innerHTML = '';
         history.forEach(h => {
           const tr = document.createElement('tr');
@@ -1511,7 +1317,6 @@
           historyBody.appendChild(tr);
         });
 
-        // Gráfico (barras por categoria)
         drawCategoryChart();
       }
 
@@ -1524,7 +1329,6 @@
         canvas.width = w;
         canvas.height = h;
 
-        // Contar combinações concluídas por categoria (som1 e som2)
         const catCount = {};
         state.combinations.forEach(c => {
           if (c.done) {
@@ -1558,15 +1362,12 @@
         });
       }
 
-      // ============================================================
-      // 13. LABORATÓRIO DE SONS (Web Audio)
-      // ============================================================
+      // LAB
       let labAudioContext = null;
       let labSource = null;
       let labGainNode = null;
       let labFilter = null;
       let labOscillator = null;
-      let labNoiseBuffer = null;
 
       function initLabAudio() {
         if (!labAudioContext) {
@@ -1606,13 +1407,10 @@
           labGainNode = ctx.createGain();
           labGainNode.gain.value = volume;
 
-          // Criar filtro
           labFilter = ctx.createBiquadFilter();
           labFilter.type = 'lowpass';
 
-          // Gerar som conforme tipo
           if (type === 'chuva') {
-            // Ruído branco filtrado
             const buffer = generateNoiseBuffer(ctx, 3);
             labSource = ctx.createBufferSource();
             labSource.buffer = buffer;
@@ -1625,14 +1423,12 @@
             labSource.start();
             labStatus.textContent = '🌧️ Chuva';
           } else if (type === 'ondas') {
-            // Ruído marrom + oscilador LFO para ondulação
             const buffer = generateNoiseBuffer(ctx, 3);
             labSource = ctx.createBufferSource();
             labSource.buffer = buffer;
             labSource.loop = true;
             labFilter.frequency.value = 800;
             labFilter.Q.value = 1.5;
-            // Modulação de amplitude com oscilador lento
             const lfo = ctx.createOscillator();
             const lfoGain = ctx.createGain();
             lfo.frequency.value = 0.3;
@@ -1645,10 +1441,8 @@
             labGainNode.connect(ctx.destination);
             labSource.start();
             labStatus.textContent = '🌊 Ondas';
-            // guardar lfo para parar
             labOscillator = lfo;
           } else if (type === 'floresta') {
-            // Ruído rosa + alguns chirps (simples)
             const buffer = generateNoiseBuffer(ctx, 3);
             labSource = ctx.createBufferSource();
             labSource.buffer = buffer;
@@ -1661,7 +1455,6 @@
             labSource.start();
             labStatus.textContent = '🌲 Floresta';
           } else if (type === 'vento') {
-            // Ruído filtrado passa-baixa com variação
             const buffer = generateNoiseBuffer(ctx, 3);
             labSource = ctx.createBufferSource();
             labSource.buffer = buffer;
@@ -1669,7 +1462,6 @@
             labFilter.type = 'bandpass';
             labFilter.frequency.value = 600;
             labFilter.Q.value = 0.5;
-            // Modulação de frequência com LFO
             const lfoFreq = ctx.createOscillator();
             const lfoFreqGain = ctx.createGain();
             lfoFreq.frequency.value = 0.2;
@@ -1712,9 +1504,7 @@
         labStatus.textContent = '⏸ Parado';
       }
 
-      // ============================================================
-      // 14. EXPORT / IMPORT
-      // ============================================================
+      // EXPORT / IMPORT
       function exportBackup() {
         const data = JSON.stringify(state, null, 2);
         const blob = new Blob([data], { type: 'application/json' });
@@ -1771,17 +1561,14 @@
         URL.revokeObjectURL(url);
       }
 
-      // ============================================================
-      // 15. EVENT LISTENERS
-      // ============================================================
-      // Timer
+      // EVENT LISTENERS
       startBtn.addEventListener('click', () => {
         if (state.combinations[state.currentIndex].done) {
           alert('Esta combinação já foi concluída! Avance para a próxima.');
           return;
         }
         if (timerState === 'paused') {
-          pauseTimer(); // retoma
+          pauseTimer();
           return;
         }
         startTimer();
@@ -1798,7 +1585,7 @@
         }
         if (confirm('Marcar esta combinação como concluída (sem timer)?')) {
           combo.done = true;
-          state.xp += 5; // menos XP que completo
+          state.xp += 5;
           state.gold += 2;
           const newLevel = getLevelFromXp(state.xp);
           if (newLevel > state.level) state.level = newLevel;
@@ -1816,7 +1603,6 @@
         }
       });
 
-      // Navegação
       prevBtn.addEventListener('click', () => {
         if (state.currentIndex > 0) {
           if (timerState === 'running' || timerState === 'paused') {
@@ -1861,7 +1647,6 @@
         resetTimer();
       });
 
-      // Modals
       modalCloses.forEach(btn => {
         btn.addEventListener('click', () => {
           const modalId = btn.dataset.modal;
@@ -1889,19 +1674,16 @@
         labModal.classList.add('active');
       });
 
-      // Catalog filters
       catalogSearch.addEventListener('input', () => renderCatalog(0));
       catalogCategoryFilter.addEventListener('change', () => renderCatalog(0));
       catalogStatusFilter.addEventListener('change', () => renderCatalog(0));
 
-      // Lab
       labPlayBtn.addEventListener('click', playLabSound);
       labStopBtn.addEventListener('click', stopLabSound);
       labVolume.addEventListener('input', () => {
         if (labGainNode) labGainNode.gain.value = parseFloat(labVolume.value);
       });
 
-      // Stats: export/import
       $('exportHistoryCsvBtn').addEventListener('click', exportHistoryCsv);
       $('exportBackupBtn').addEventListener('click', exportBackup);
       $('importBackupBtn').addEventListener('click', () => {
@@ -1914,7 +1696,6 @@
         }
       });
 
-      // Teclado
       document.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowLeft' && !catalogModal.classList.contains('active')) {
           prevBtn.click();
@@ -1923,9 +1704,7 @@
         }
       });
 
-      // ============================================================
-      // 16. INICIALIZAÇÃO
-      // ============================================================
+      // INIT
       populateCatalogFilters();
       setPhase('focus');
       updateUI();
